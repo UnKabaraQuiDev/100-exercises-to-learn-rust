@@ -1,3 +1,5 @@
+use thiserror::Error;
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum Status {
     ToDo,
@@ -21,7 +23,7 @@ impl TryFrom<String> for Status {
     }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Error)]
 #[error("`{invalid_status}` is not a valid status. Use one of: ToDo, InProgress, Done")]
 pub struct ParseStatusError {
     invalid_status: String,
