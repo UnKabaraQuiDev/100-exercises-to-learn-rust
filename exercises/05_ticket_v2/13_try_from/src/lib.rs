@@ -1,11 +1,51 @@
 // TODO: Implement `TryFrom<String>` and `TryFrom<&str>` for `Status`.
 //  The parsing should be case-insensitive.
 
+use std::future::IntoFuture;
+use thiserror::Error;
+
 #[derive(Debug, PartialEq, Clone)]
 enum Status {
     ToDo,
     InProgress,
     Done,
+}
+
+#[derive(Error, Debug)]
+enum TryFromError {
+    #[error("Not found.")]
+    NotFound,
+}
+
+impl TryFrom<String> for Status {
+    type Error = TryFromError;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let lowercased = value.to_lowercase();
+        if lowercased == "todo" {
+            return Ok(Self::ToDo);
+        } else if lowercased == "inprogress" {
+            return Ok(Self::InProgress);
+        } else if lowercased == "done" {
+            return Ok(Self::Done);
+        }
+        Err(Self::Error::NotFound)
+    }
+}
+
+impl TryFrom<&str> for Status {
+    type Error = TryFromError;
+    fn try_from(val: &str) -> Result<Self, Self::Error> {
+        let value: String = String::from(val);
+        let lowercased = value.to_lowercase();
+        if lowercased == "todo" {
+            return Ok(Self::ToDo);
+        } else if lowercased == "inprogress" {
+            return Ok(Self::InProgress);
+        } else if lowercased == "done" {
+            return Ok(Self::Done);
+        }
+        Err(Self::Error::NotFound)
+    }
 }
 
 #[cfg(test)]
