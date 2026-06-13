@@ -1,3 +1,5 @@
+use std::{slice::Iter, vec::IntoIter};
+
 // TODO: Implement the `to_dos` method. It must return a `Vec` of references to the tickets
 //  in `TicketStore` with status set to `Status::ToDo`.
 use ticket_fields::{TicketDescription, TicketTitle};
@@ -21,6 +23,15 @@ pub enum Status {
     Done,
 }
 
+impl<'a> IntoIterator for &'a TicketStore {
+    type Item = &'a Ticket;
+    type IntoIter = Iter<'a, Ticket>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.iter()
+    }
+}
+
 impl TicketStore {
     pub fn new() -> Self {
         Self {
@@ -31,6 +42,23 @@ impl TicketStore {
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
     }
+
+    pub fn to_dos(&self) -> Vec<&Ticket> {
+        self.tickets
+            .iter()
+            .filter(|&t| t.status == Status::ToDo)
+            .collect::<Vec<&Ticket>>()
+    }
+
+    /*pub fn to_dos(&self) -> Vec<&Ticket> {
+        let mut tickets: Vec<&Ticket> = Vec::new();
+        for t in self.into_iter() {
+            if t.status == Status::ToDo {
+                tickets.push(t);
+            }
+        }
+        return tickets;
+    }*/
 }
 
 #[cfg(test)]

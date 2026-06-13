@@ -1,6 +1,16 @@
 // TODO: Define a function named `sum` that takes a reference to a slice of `u32` and returns the sum of all
 //  elements in the slice.
 
+use std::ops::Add;
+
+pub fn sum(t: &[u32]) -> u32 {
+    let mut total: u32 = 0;
+    for element in t {
+        total = *element + total;
+    }
+    return total;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

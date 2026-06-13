@@ -1,12 +1,48 @@
 // TODO: Implement `IndexMut<&TicketId>` and `IndexMut<TicketId>` for `TicketStore`.
 
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
     counter: u64,
+}
+
+impl Index<TicketId> for TicketStore {
+    type Output = Ticket;
+    fn index(&self, index: TicketId) -> &Self::Output {
+        match self.tickets.iter().find(|&t| t.id.0 == index.0) {
+            Some(t) => t,
+            None => panic!(),
+        }
+    }
+}
+impl IndexMut<TicketId> for TicketStore {
+    fn index_mut(&mut self, index: TicketId) -> &mut Self::Output {
+        self.tickets
+            .iter_mut()
+            .find(|t| t.id.0 == index.0)
+            .expect("msg")
+    }
+}
+
+impl Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+    fn index(&self, index: &TicketId) -> &Self::Output {
+        match self.tickets.iter().find(|&t| t.id.0 == index.0) {
+            Some(t) => t,
+            None => panic!(),
+        }
+    }
+}
+impl IndexMut<&TicketId> for TicketStore {
+    fn index_mut(&mut self, index: &TicketId) -> &mut Self::Output {
+        self.tickets
+            .iter_mut()
+            .find(|t| t.id.0 == index.0)
+            .expect("msg")
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -56,22 +92,6 @@ impl TicketStore {
 
     pub fn get(&self, id: TicketId) -> Option<&Ticket> {
         self.tickets.iter().find(|&t| t.id == id)
-    }
-}
-
-impl Index<TicketId> for TicketStore {
-    type Output = Ticket;
-
-    fn index(&self, index: TicketId) -> &Self::Output {
-        self.get(index).unwrap()
-    }
-}
-
-impl Index<&TicketId> for TicketStore {
-    type Output = Ticket;
-
-    fn index(&self, index: &TicketId) -> &Self::Output {
-        &self[*index]
     }
 }
 
