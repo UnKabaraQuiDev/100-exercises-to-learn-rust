@@ -3,8 +3,19 @@
 //  Do not allocate any additional memory!
 use std::thread;
 
-pub fn sum(slice: &'static [i32]) -> i32 {
-    todo!()
+pub fn sum(v: &'static [i32]) -> i32 {
+    let mut sum: i32 = 0;
+
+    let part1 = v[0..v.len() / 2].to_vec();
+    let handle1 = thread::spawn(move || part1.iter().sum::<i32>());
+
+    let part2 = v[v.len() / 2..v.len()].to_vec();
+    let handle2 = thread::spawn(move || part2.iter().sum::<i32>());
+
+    sum += handle1.join().unwrap();
+    sum += handle2.join().unwrap();
+
+    sum
 }
 
 #[cfg(test)]
